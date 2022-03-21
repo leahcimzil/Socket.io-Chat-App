@@ -1,0 +1,25 @@
+{
+  "name": "socket.io-chat-app",
+  "version": "1.0.0",
+  "description": "A simple socket io chat app",
+  "main": "events.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon events"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/leahcimzil/Socket.io-Chat-App.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/leahcimzil/Socket.io-Chat-App/issues"
+  },
+  "homepage": "https://github.com/leahcimzil/Socket.io-Chat-App#readme",
+  "dependencies": {
+    "express": "^4.17.3",
+    "socket.io": "^4.4.1"
+  }
+}
