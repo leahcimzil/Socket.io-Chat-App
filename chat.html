@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Chat App</title>
+    <style>
+        .container {
+            margin: auto;
+            width: 60%;
+            border: 5px solid #000000;
+            padding: 10px;
+        }
+
+        #chatName {
+            font-size: 14px;
+            font-weight: 300;
+            margin-top: -20px;
+            color: darkslategray;
+        }
+
+        #chatDisplay {
+            font-size: 25px;
+        }
+
+        .bottom-panel,
+        .bottom-panel input {
+            font-size: 25px;
+        }
+
+        #sendButton {
+            font-size: 22px;
+        }
+
+        button.disabled {
+            background-color: gray;
+            color: black;
+        }
+
+        button.active {
+            background-color: blue;
+            color: white;
+        }
+
+        input:disabled {
+            color: gray;
+        }
+    </style>
+    <script src="https://cdn.socket.io/4.4.1/socket.io.min.js"
+        integrity="sha384-fKnu0iswBIqkjxrhQCTZ7qlLHOFEgNkRmK2vaO/LbTZSXdJfAu6ewRBdwHPhBo/H"
+        crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <div class="container" style="height: 500px;max-height: 500px;overflow-y: scroll;">
+        <div id="chatDisplay"></div>
+    </div>
+
+    <div class="container bottom-panel">
+        <button id='disconnectButton' class="inactive" disabled>Disconnect</button>
+        <button id='connectButton' class="active">Connect</button>
+        <p id="timeDispPara">Current Server Time: <span id="time-display"></span></p>
+        <p>Clients Connected: <span id="clientsConnected"></span></p>
+        <p>Your Name: <input type="text" id="name" /></p>
+        <p>Your Message: <input type="text" id="message" style="width: 100%" /></p>
+        <button id='sendButton'>Send Message</button>
+    </div>
+
+    <script>
+        
+        const socket = io(
+            {
+                autoConnect: false
+            });
+
+        const displayChat = document.getElementById('chatDisplay');
+        const displayName = document.getElementById('name');
+        const chatMessage = document.querySelector('#message');
+        const displayTime = document.querySelector('#time-display');
+        const displayTimePara = document.querySelector('#timeDispPara');
+        const clientsConnected = document.querySelector('#clientsConnected');
+        const sendButton = document.querySelector('#sendButton');
+        const disconnectButton = document.querySelector('#disconnectButton');
+        const connectButton = document.querySelector('#connectButton');
+
+
+        sendButton.disabled = true;
+        chatMessage.disabled = true;
+        displayTime.innerHTML = "";
+        displayTimePara.disabled = true;
+        displayName.disabled = true;
+        displayChat.innerHTML = "";
+        clientsConnected.innerHTML = '';
+
+        //Define Button State function
+        function changeButtonState() {
+            //get class name and id of target element
+            let state = event.target.className;
+            let id = event.target.id;
+
+            //If class is 'active...'
+            if (state == 'active') {
+
+                //get the id of inactive button
+                let inactiveID = document.querySelector('.inactive').getAttribute('id');
+
+                //change the enabled state of the active button to disabled
+                document.getElementById(`${id}`).disabled = true;
+
+                //change the disabled state of the inactive button to enabled
+                document.getElementById(`${inactiveID}`).disabled = false;
+
+                //change the class of the active button to inactive
+                document.getElementById(`${id}`).className = 'inactive';
+
+                //change the class of the inactive button to active
+                document.getElementById(`${inactiveID}`).className = 'active';
+            };
+        }
+
+
+        //function disconnect events disables all fields
+        function disconnectEvents() {
+            //disable all enabled elements
+            sendButton.disabled = true;
+            chatMessage.disabled = true;
+            displayTime.innerHTML = "";
+            displayTimePara.disabled = true;
+            displayName.disabled = true;
+            displayChat.innerHTML = "";
+            clientsConnected.innerHTML = '';
+        }
+
+        //function connect events enables all fields
+        function connectEvents() {
+            //enable all disabled elements
+            sendButton.disabled = false;
+            chatMessage.disabled = false;
+            displayName.disabled = false;
+        }
+
+
+        //Add an event listener to sendButton
+        //that emits message object on click
+        sendButton.addEventListener('click', () => {
+            //Validate the message and name using if else
+            if (displayName.value.length < 1) {
+                //if length of display name is 0 or less than one
+                alert('You must enter a name');
+            } else if (chatMessage.value.length < 1) {
+                //if length of display message is 0 or less than one
+                alert('You must enter a message');
+            } else {
+                //send message and name as objects
+                socket.emit('message', {
+                    name: displayName.value,
+                    message: chatMessage.value
+                });
+
+                //Clear Textbox
+                chatMessage.value = "";
+            }
+
+        });
+
+
+
+        //On disconnect button click, socket.disconnect
+        //socket.disconnect sort of 'emits' a disconnect event
+        //It can only be used on the client side
+        disconnectButton.addEventListener('click', () => {
+            //disconnect socket
+            socket.disconnect();
+
+            //run changeButtonState
+            changeButtonState();
+
+            //run disconnect events to disable all fields
+            disconnectEvents();
+        });
+
+
+        //On connect button click, socket.connect();
+        //socket.connect sort of 'emits' a connect event
+        //It can only be used on the client side
+        connectButton.addEventListener('click', () => {
+            //connect socket
+            socket.connect();
+
+            //run changeButtonState
+            changeButtonState();
+
+            //run connect events to enable all fields
+            connectEvents();
+
+        });
+
+
+        //send welcome message on connect
+        socket.on('welcome', message => {
+            displayChat.innerHTML = "<p>" + message + "</p>";
+        });
+
+        //send number of connected clients
+        //this increments on connect
+        socket.on('member', member => {
+            clientsConnected.innerHTML = member;
+        });
+
+        //display number of connected clients
+        //this decrements on disconnect
+        socket.on('member1', member1 => {
+            clientsConnected.innerHTML = member1;
+        });
+
+        //display message object with name and message
+        socket.on('message', message => {
+            //Display message in chat
+            const newTag = document.createElement('p');
+            const newTagName = document.createElement('p');
+
+            //set attribute
+            newTagName.setAttribute('id', 'chatName');
+
+            newTag.innerHTML = message.message;
+            displayChat.appendChild(newTag);
+
+            newTagName.innerHTML = message.name;
+            displayChat.appendChild(newTagName);
+        });
+
+        //display time
+        socket.on('time', time => {
+            displayTime.innerHTML = time;
+        });
+
+    </script>
+</body>
+
+</html>
