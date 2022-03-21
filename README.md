@@ -18,8 +18,6 @@ Express and Socket io
 
 ### Scripts
 
-````npm start```
-new
+```npm start```
+
 =======
-Test
->>>>>>> 659377f2c17c17e49d0598fbd18cfd6a59b513f8
