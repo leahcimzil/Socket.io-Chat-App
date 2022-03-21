@@ -1,5 +1,5 @@
 # Socket.io-Chat-App
-<<<<<<< HEAD
+
 
 This was originally a project from the Full Stack Application diploma being offered at NSCC, Canada
 
@@ -18,6 +18,8 @@ Express and Socket io
 
 ### Scripts
 
-```npm start```
+```
+npm start
+```
 
 =======
