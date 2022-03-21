@@ -23,6 +23,7 @@ install dependencies
 npm install
 ```
 
+run server on localhost:3000
 ```
 npm start
 ```
