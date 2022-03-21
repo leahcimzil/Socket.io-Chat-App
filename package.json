@@ -2,7 +2,7 @@
   "name": "socket.io-chat-app",
   "version": "1.0.0",
   "description": "A simple socket io chat app",
-  "main": "events.js",
+  "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon events"
