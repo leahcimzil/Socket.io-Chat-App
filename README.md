@@ -13,10 +13,15 @@ The aim is to build a simple socket io chat app that:
 6. Displays the number of clients connected to a chat server
 
 
-Dependencies:
+### Dependencies:
 Express and Socket io
 
 ### Scripts
+
+install dependencies
+```
+npm install
+```
 
 ```
 npm start
