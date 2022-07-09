@@ -1,7 +1,3 @@
-# Socket.io-Chat-App
-
-
-This was originally a project from the Full Stack Application diploma being offered at NSCC, Canada
 
 The aim is to build a simple socket io chat app that:
 
